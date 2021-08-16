@@ -79,7 +79,7 @@ for n1 = 1:N
                         end
                         X =[n1 n2 n3 n4 index index];
                         %                         M = [ A1 + 1i * A2 sqrt(sqrt(2)-1) * ( B1 + 1i * B2); sqrt(sqrt(2)-1) * (B1 - 1i * B2) A1 - 1i * A2];
-                        if(Valid1&&(d(BadGeos2{13},X)>1e-8)&&(d(BadGeos2{14},X)>1e-8)&&(d(BadGeos2{15},X)>1e-8)&&(d(BadGeos2{16},X)>1e-8)||((~special)&&Valid1)) %is it a valid geodesic
+                        if(Valid1)&&(d(BadGeos2{16},X)>1e-8)||((~special)&&Valid1)) %is it a valid geodesic
                             
                             %which # of valid matrix is this
                             fin = 0; % is the series ended
