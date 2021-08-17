@@ -1,7 +1,8 @@
 % function g = Geodesics2(N) %#codegen
-prods = cell(0);
+
 pick = 1;
 N=80;
+prods = cell(1,N);
 Length = zeros(N,1);
 P =[1 0 0 0 0 0; 0 -1 0 0 0 0; 0 0 1 0 0 0; 0 0 0 1 0 0; 0 0 0 0 1 0;0 0 0 0 0 1];
 % Q = 5e2;
@@ -9,7 +10,7 @@ g = zeros(N,1); %multiplicities
 s5000= zeros(N,1);
 errProd = [];
 % trouble = 0;
-
+cl=0;
 % em = @(n) mod(ceil(sqrt(2)*n),2) * ceil(sqrt(2)*n) + mod(floor(sqrt(2)*n),2) * floor(sqrt(2)*n); %must be odd
 % em2 = @(n) mod(floor(sqrt(2)*n),2) * ceil(sqrt(2)*n) + mod(ceil(sqrt(2)*n),2) * floor(sqrt(2)*n); %must be even
 emp = @(n,p) (mod(ceil(sqrt(2)*n),2) * ceil(sqrt(2)*n) + mod(floor(sqrt(2)*n),2) * floor(sqrt(2)*n)) * mod(p,2)...
@@ -24,7 +25,7 @@ BadGeos2{13} = [1 -4 6 3 0 0];
 BadGeos2{14} = [ 1     4     6     2     1     1];
 BadGeos2{15} = [ 1     4     6     3     0     0];
 BadGeos2{16} = [ 1    -4     6     2     1     1];
-for n1 = 12:N
+for n1 = 1:N
     XXX = cell(0);
 
     XX = cell(0);
@@ -50,7 +51,7 @@ for n1 = 12:N
             %disp("B1:")
             B1 = n3*sqrt(2) + emp(n3,index) ;%new
             n4 = floor(1/4*max(0, real(sqrt(A1*A1/t/t-B1*B1-1/t/t)-1)));
-            while n4<=min(n3,(sqrt(delta))/sqrt(8))
+            while n4<=n3
                 
                 %disp("B2:")
                 B2 =  n4*sqrt(2) + emp(n4,index) ;%new
@@ -109,15 +110,22 @@ for n1 = 12:N
                                     for r = 1:8
                                         if(d(XX{m},Mrot{r})<1e-8)
                                             fin = 1;
+                                            cl = 1;
                                         end
                                     end
                                     if(d(r45(XX{m}*P,4),X{1})<1e-8)
                                         fin = 1;
+                                        cl=1;
                                     end
 
                                 end
                             end
                             if(fin==1)
+                                if(cl==1)
+                                    prods{n1}(end)=[];
+                                    XXX(end) =[];
+                                    cl=0;
+                                end
                                 break
                             end
                             
@@ -161,7 +169,7 @@ for n1 = 12:N
                                 end
                                 %                                 Conditions(1)=1;
                                 %                                 R(1) = X(1);
-                                %prods{end+1}{1} = Conditions(1);
+                                %prods{n1}{end+1}{1} = Conditions(1);
                             end
 %                             possFin =0;
 %                             for f=1:8
@@ -173,19 +181,19 @@ for n1 = 12:N
                                 pick = 1;
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
-                                prods{end+1}{1} = Conditions(pick);
+                                prods{n1}{end+1}{1} = Conditions(pick);
                                 XXX{end+1}{1} = X{pick};
                             elseif((sigma2(R{Conditions(2)})-delta==0)&&special)
                                 pick = 2;
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
-                                prods{end+1}{1} = Conditions(pick);
+                                prods{n1}{end+1}{1} = Conditions(pick);
                                 XXX{end+1}{1} = X{pick};
                             else
                                 pick = 1;
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
-                                prods{end+1}{1} = Conditions(pick);
+                                prods{n1}{end+1}{1} = Conditions(pick);
                                 XXX{end+1}{1} = X{pick};
                             end
                             
@@ -205,7 +213,7 @@ for n1 = 12:N
 %                                         OrbitPlotter2(X{i});
 %                                     end
 %                                 end
-                                errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{end}))) ) <1e-2)];
+                                errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{n1}{end}))) ) <1e-2)];
                                 if(errProd(end)==0)
                                     disp("Error")
                                 end
@@ -225,11 +233,18 @@ for n1 = 12:N
                                 for z =1:(length(XX)-1)
                                     if((d(XX{z},X{1})<1e-8)||(d(RR{z},XR{1})<1e-8))
                                         fin = 1;
+                                        cl=1;
                                     end
                                 end
                             end
                             % % % %            5%%%%%%%%%%%%%%%%%%%%%%%%
                             if(fin==1)
+                                if(cl==1)
+                                    prods{n1}(end)=[];
+                                    XXX(end) =[];
+                                    cl=0;
+                                end
+                                break
 %                                 prods(end)=[];
 %                                 XXX(end) =[];
                             end
@@ -315,7 +330,7 @@ for n1 = 12:N
                                 sortScore = sort(score);
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
-                                prods{end}{end+1} = Conditions(pick);
+                                prods{n1}{end}{end+1} = Conditions(pick);
                                 XXX{end}{end+1} = X{r+1};
 %                                 if((length(Cond)>1)&&(abs(prods{end}{end}-prods{end}{end-1})==4))
 %                                     prods{end}{end} = Conditions(sortScore(2));
@@ -326,6 +341,7 @@ for n1 = 12:N
                                     for z =1:(length(XX)-1)
                                         if((d(r45(XX{z}*P,4),X{r})<1e-8)||(d(XX{z},X{r})<1e-8)||(d(RR{z},XR{r})<1e-8))
                                             fin =1;
+                                            cl=1;
                                         end
                                     end
                                     Mrot =cell(1,8);
@@ -338,12 +354,13 @@ for n1 = 12:N
                                             for y =1:length(XXX{z})
                                                 if((d(r45(XXX{z}{y}*P,4),Mrot{s1})<1e-8)||(d(XXX{z}{y},Mrot{s1})<1e-8))
                                                     fin =1;
+                                                    cl=1;
                                                 end
                                             end
                                         end
                                     end
                                     if(fin==1)
-                                        prods(end) = [];
+                                        prods{n1}(end) = [];
                                         XXX(end) = [];
                                         break
                                     end
@@ -355,7 +372,7 @@ for n1 = 12:N
                                 if(d(B{Conditions(pick)},X{1})< 1e-3)
                                      fin = 1;
                                      
-                                     errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{end}))) ) <1e-2)];
+                                     errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{n1}{end}))) ) <1e-2)];
                                      if(errProd(end)==0)
                                          disp("Error")
                                      end

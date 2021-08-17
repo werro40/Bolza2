@@ -57,7 +57,7 @@ for n1 = 1:N
                 
                 sigma  = B1 * B1 + 5 * B2 * B2 - 4 * B1 * B2;
                 
-                if logical( sigma <= delta-1*(-1).^(special)*1e-12) %is it in1side the octagon
+                if logical( sigma <= delta+1e-3) %is it in1side the octagon
                     for neg =1:2
                         A2 = (-1).^neg*sqrt(1 + (sqrt(2)-1) * (B1*B1 +B2*B2) - A1*A1);
                         
@@ -79,7 +79,7 @@ for n1 = 1:N
                         end
                         X =[n1 n2 n3 n4 index index];
                         %                         M = [ A1 + 1i * A2 sqrt(sqrt(2)-1) * ( B1 + 1i * B2); sqrt(sqrt(2)-1) * (B1 - 1i * B2) A1 - 1i * A2];
-                        if(Valid1&&(d(BadGeos2{13},X)>1e-8)&&(d(BadGeos2{14},X)>1e-8)&&(d(BadGeos2{15},X)>1e-8)&&(d(BadGeos2{16},X)>1e-8)||((~special)&&Valid1)) %is it a valid geodesic
+                        if(Valid1) %is it a valid geodesic
                             
                             %which # of valid matrix is this
                             fin = 0; % is the series ended
@@ -96,9 +96,6 @@ for n1 = 1:N
                             
                             X{1} =[n1 n2 n3 n4 index index];
                             XR{1} = X{1};
-                            if(d(X{1},[ 1 -1 2 1 1 1])<1e-2)
-                                 disp("o")
-                            end
                             if(~isempty(XX))
                                 Mrot =cell(1,8);
                                 for  r= 1:8
@@ -135,8 +132,8 @@ for n1 = 1:N
                                 R{k} = rot2(B{k});
                                 
                                 
-                                if(sigma2(R{k})-delta<=-1*(-1).^(special)*1e-9)
-                                    if((d2(BadGeos2{13},R{k})>1e-8)&&(d2(BadGeos2{14},R{k})>1e-8)&&(d2(BadGeos2{15},R{k})>1e-8)&&(d2(BadGeos2{16},R{k})>1e-8)||(~special))
+                                if(sigma2(R{k})-delta<=1e-3)%%
+                                    if(1)%%
                                         i=i+1;
                                         Conditions(i) = k;
                                         
@@ -205,9 +202,7 @@ for n1 = 1:N
 %                                     end
 %                                 end
                                 errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{end}))) ) <1e-2)];
-                                if(errProd(end)==0)
-                                    disp("Error")
-                                end
+
                                 RR{indexI} = X{1};
                                 XR{1}= X{1};
                                 
@@ -249,8 +244,8 @@ for n1 = 1:N
                                     R{k} = rot2(B{k});
                                     
                                     
-                                    if(sigma2(R{k})-delta<=-1e-9*(-1).^(special))
-                                        if((d2(BadGeos2{13},R{k})>1e-9)&&(d2(BadGeos2{14},R{k})>1e-9)&&(d2(BadGeos2{15},R{k})>1e-9)&&(d2(BadGeos2{16},R{k})>1e-9)||(~special))
+                                    if(sigma2(R{k})-delta<=1e-3)
+                                        if(1)
                                             if(d(B{k},X{r-1})>1e-3)
                                                 i=i+1;
                                                 Conditions(i) = k;
@@ -300,9 +295,9 @@ for n1 = 1:N
                                 score =zeros(1,length(Cond));
                                 for h=1:length(Cond)
                                     if((possFin(Cond(h))==0)&&(possBad(Cond(h))==0))
-                                        score(h) = 3*(~special)+4*(special);
+                                        score(h) = 3;
                                     elseif((possFin(Cond(h))==1)&&(possBad(Cond(h))==0))
-                                        score(h) = 4*(~special)+3*(special);
+                                        score(h) = 4;
                                     elseif((possFin(Cond(h))==1)&&(possBad(Cond(h))==1))
                                         score(h) = 2;
                                     elseif((possFin(Cond(h))==0)&&(possBad(Cond(h))==1))
