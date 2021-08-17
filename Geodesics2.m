@@ -98,9 +98,6 @@ for n1 = 1:N
                             
                             X{1} =[n1 n2 n3 n4 index index];
                             XR{1} = X{1};
-                            if(d(X{1},[ 1 -1 2 1 1 1])<1e-2)
-                                 disp("o")
-                            end
                             if(~isempty(XX))
                                 Mrot =cell(1,8);
                                 for  r= 1:8
@@ -110,12 +107,12 @@ for n1 = 1:N
                                     for r = 1:8
                                         if(d(XX{m},Mrot{r})<1e-8)
                                             fin = 1;
-                                            cl = 1;
+                                            cl = 0;
                                         end
                                     end
                                     if(d(r45(XX{m}*P,4),X{1})<1e-8)
                                         fin = 1;
-                                        cl=1;
+                                        cl = 0;
                                     end
 
                                 end
