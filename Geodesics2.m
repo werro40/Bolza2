@@ -1,7 +1,7 @@
 % function g = Geodesics2(N) %#codegen
 
 pick = 1;
-N=80;
+N=90;
 prods = cell(1,N);
 Length = zeros(N,1);
 P =[1 0 0 0 0 0; 0 -1 0 0 0 0; 0 0 1 0 0 0; 0 0 0 1 0 0; 0 0 0 0 1 0;0 0 0 0 0 1];
@@ -27,6 +27,7 @@ BadGeos2{15} = [ 1     4     6     3     0     0];
 BadGeos2{16} = [ 1    -4     6     2     1     1];
 for n1 = 1:N
     XXX = cell(0);
+    XXR = cell(0);
 
     XX = cell(0);
     disp(n1)
@@ -110,10 +111,10 @@ for n1 = 1:N
                                             cl = 0;
                                         end
                                     end
-                                    if(d(r45(XX{m}*P,4),X{1})<1e-8)
-                                        fin = 1;
-                                        cl = 0;
-                                    end
+%                                     if(d(r45(XX{m}*P,4),X{1})<1e-8)
+%                                         fin = 1;
+%                                         cl = 0;
+%                                     end
 
                                 end
                             end
@@ -121,6 +122,7 @@ for n1 = 1:N
                                 if(cl==1)
                                     prods{n1}(end)=[];
                                     XXX(end) =[];
+                                    XXR(end) =[];
                                     cl=0;
                                 end
                                 break
@@ -179,19 +181,22 @@ for n1 = 1:N
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
                                 prods{n1}{end+1}{1} = Conditions(pick);
-                                XXX{end+1}{1} = X{pick};
+                                XXX{end+1}{1} = X{r+1};
+                                XXR{end+1}{1} = X{1};
                             elseif((sigma2(R{Conditions(2)})-delta==0)&&special)
                                 pick = 2;
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
                                 prods{n1}{end+1}{1} = Conditions(pick);
-                                XXX{end+1}{1} = X{pick};
+                                XXX{end+1}{1} = X{r+l};
+                                XXR{end+1}{1} = X{1};
                             else
                                 pick = 1;
                                 X{r+1} = B{Conditions(pick)};
                                 XR{r} = R{Conditions(pick)};
                                 prods{n1}{end+1}{1} = Conditions(pick);
-                                XXX{end+1}{1} = X{pick};
+                                XXX{end+1}{1} = X{r+1};
+                                XXR{end+1}{1} = X{1};
                             end
                             
                             
@@ -212,7 +217,7 @@ for n1 = 1:N
 %                                 end
                                 errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{n1}{end}))) ) <1e-2)];
                                 if(errProd(end)==0)
-                                    disp("Error")
+%                                     disp("Error")
                                 end
                                 RR{indexI} = X{1};
                                 XR{1}= X{1};
@@ -225,6 +230,7 @@ for n1 = 1:N
                                 RR{indexI} = R{Conditions(1)};
                                 %prods{end}{end+1} = Conditions(1);
                                  XXX{end}{2} = X{2};
+                                 XXX{end}{2} = XR{1};
                             end
                             if(length(XX)>1)
                                 for z =1:(length(XX)-1)
@@ -239,6 +245,7 @@ for n1 = 1:N
                                 if(cl==1)
                                     prods{n1}(end)=[];
                                     XXX(end) =[];
+                                    XXR(end) =[];
                                     cl=0;
                                 end
                                 break
@@ -329,14 +336,15 @@ for n1 = 1:N
                                 XR{r} = R{Conditions(pick)};
                                 prods{n1}{end}{end+1} = Conditions(pick);
                                 XXX{end}{end+1} = X{r+1};
-%                                 if((length(Cond)>1)&&(abs(prods{end}{end}-prods{end}{end-1})==4))
-%                                     prods{end}{end} = Conditions(sortScore(2));
-%                                 end
+                                XXR{end}{end+1} = XR{r};
+                                if((length(Cond)>1)&&(abs(prods{n1}{end}{end}-prods{n1}{end}{end-1})==4))
+                                    prods{n1}{end}{end} = Conditions(sortScore(2));
+                                end
 
 
                                 if(length(XXX)>1)
                                     for z =1:(length(XX)-1)
-                                        if((d(r45(XX{z}*P,4),X{r})<1e-8)||(d(XX{z},X{r})<1e-8)||(d(RR{z},XR{r})<1e-8))
+                                        if((d(RR{z},XR{r})<1e-8)||(d(RR{z},r45(XR{r},1))<1e-8)||(d(RR{z},r45(XR{r},7))<1e-8)) %(d(XX{z},X{r})<1e-8)||d(r45(XX{z}*P,4),X{r})<1e-8(0)||
                                             fin =1;
                                             cl=1;
                                         end
@@ -349,7 +357,21 @@ for n1 = 1:N
                                     for z =1:(length(XXX)-1)
                                         for s1=1:3
                                             for y =1:length(XXX{z})
-                                                if((d(r45(XXX{z}{y}*P,4),Mrot{s1})<1e-8)||(d(XXX{z}{y},Mrot{s1})<1e-8))
+                                                if((d(XXX{z}{y},Mrot{s1})<1e-8))%(d(r45(XXX{z}{y}*P,4),Mrot{s1})<1e-8)||
+                                                    fin =1;
+                                                    cl=1;
+                                                end
+                                            end
+                                        end
+                                    end
+                                    MrotR =cell(1,8);
+                                    for  s1= 7:9
+                                        MrotR(s1-6) ={r45(XR{r},s1)};
+                                    end
+                                    for z =1:(length(XXR)-1)
+                                        for s1=1:3
+                                            for y =1:length(XXR{z})
+                                                if((d(XXR{z}{y},MrotR{s1})<1e-8))%(d(r45(XXX{z}{y}*P,4),Mrot{s1})<1e-8)||
                                                     fin =1;
                                                     cl=1;
                                                 end
@@ -359,6 +381,7 @@ for n1 = 1:N
                                     if(fin==1)
                                         prods{n1}(end) = [];
                                         XXX(end) = [];
+                                        XXR(end) = [];
                                         break
                                     end
                                 end
@@ -371,7 +394,7 @@ for n1 = 1:N
                                      
                                      errProd = [errProd logical( d2( abs(X{1}), abs(Identifier(prod2(prods{n1}{end}))) ) <1e-2)];
                                      if(errProd(end)==0)
-                                         disp("Error")
+%                                          disp("Error")
                                      end
                                      %                                     disp("Original:")
 %                                     disp(X{1})
@@ -390,15 +413,15 @@ for n1 = 1:N
                                     Nb8 = 0;
                                     if(mod(length(XR),2) == 0)
                                         %Nb2 = logical( (d(X{1},XR{length(XR)/2+1}) < 1e-3)||(d(r45(X{1},1),XR{length(XR)/2+1}) < 1e-3)||(d(r45(X{1},7),XR{length(XR)/2+1}) < 1e-3))*8;
-                                        Nb2 = logical( (d(X{1},XR{length(XR)/2}) < 1e-3)||(d(X{1},r45(XR{length(XR)/2},1)) < 1e-3)||(d(X{1},r45(XR{length(XR)/2},7)) < 1e-3))*4;
+                                        Nb2 = logical( (d(X{1},XR{length(XR)/2}) < 1e-3)||(d(X{1},r45(XR{length(XR)/2},1)) < 1e-3)||(d(X{1},r45(XR{length(XR)/2},7)) < 1e-3))*4; %||(d(X{1},r45(XR{length(XR)/2},1)) < 1e-3)
                                     end
                                     if((mod(length(XR),4) == 0))
                                         %Nb4 = logical( (d(X{1},XR{length(XR)/4+1}) < 1e-3)||(d(r45(X{1},1),XR{length(XR)/4+1}) < 1e-3)||(d(r45(X{1},7),XR{length(XR)/4+1}) < 1e-3))*4;
-                                        Nb2 = logical( (d(X{1},XR{length(XR)/4}) < 1e-3))*2;
+                                        Nb4 = logical( (d(X{1},XR{length(XR)/4}) < 1e-3)||(d(X{1},r45(XR{length(XR)/4},1))<1e-3)||(d(X{1},r45(XR{length(XR)/4},7)) < 1e-3))*2;
                                     end
                                     if((mod(length(XR),8) == 0))
                                         %Nb8 = logical( (d(X{1},XR{length(XR)/8+1}) < 1e-3)||(d(r45(X{1},1),XR{length(XR)/8+1}) < 1e-3)||(d(r45(X{1},7),XR{length(XR)/8+1}) < 1e-3))*2;
-                                        Nb2 = logical( (d(X{1},XR{length(XR)/8}) < 1e-3))*1;
+                                        Nb8 = logical( (d(X{1},XR{length(XR)/8}) < 1e-3)||(d(X{1},r45(XR{length(XR)/8},1))<1e-3)||(d(X{1},r45(XR{length(XR)/8},7)) < 1e-3))*1;
                                     end
                                     if(Nb8~=0)
                                         Nb = 1;
@@ -452,8 +475,8 @@ end
 zeroList =[4,24,48,72,140,160,176,184,200,224,288,432,456,472,496,704,728,816,856,880,1024,1088,1112,1128,1136,1152,1360,1384,1400,1424,1488];
 zero = zeroList(zeroList<=N);
 g(zero)=0;
-%disp("Deviation:")
-%disp(d(g',gacc(1:N)'))
-%disp(find(abs(g-gacc(1:N))>0)')
+disp("Deviation:")
+disp(d(g',gacc2(1:N)'))
+disp(find(abs(g-gacc2(1:N))>0)')
 % end
 %g([4,24,48,72,140,160,176,184,200,224,288,432,456,472,496,704,728,816,856,880,1024,1088,1112,1128,1136,1152,1360,1384,1400,1424,1488]) = 0;

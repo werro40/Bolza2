@@ -1,7 +1,7 @@
 % function g = Geodesics2(N) %#codegen
 prods = cell(0);
 pick = 1;
-N=80;
+N=20;
 Length = zeros(N,1);
 P =[1 0 0 0 0 0; 0 -1 0 0 0 0; 0 0 1 0 0 0; 0 0 0 1 0 0; 0 0 0 0 1 0;0 0 0 0 0 1];
 % Q = 5e2;
@@ -107,9 +107,9 @@ for n1 = 1:N
                                             fin = 1;
                                         end
                                     end
-                                    if(d(r45(XX{m}*P,4),X{1})<1e-8)
-                                        fin = 1;
-                                    end
+%                                     if(d(r45(XX{m}*P,4),X{1})<1e-8)
+%                                         fin = 1;
+%                                     end
 
                                 end
                             end
@@ -171,12 +171,12 @@ for n1 = 1:N
                                 XR{r} = R{Conditions(pick)};
                                 prods{end+1}{1} = Conditions(pick);
                                 XXX{end+1}{1} = X{pick};
-                            elseif((sigma2(R{Conditions(2)})-delta==0)&&special)
-                                pick = 2;
-                                X{r+1} = B{Conditions(pick)};
-                                XR{r} = R{Conditions(pick)};
-                                prods{end+1}{1} = Conditions(pick);
-                                XXX{end+1}{1} = X{pick};
+%                             elseif((sigma2(R{Conditions(2)})-delta==0)&&special)
+%                                 pick = 2;
+%                                 X{r+1} = B{Conditions(pick)};
+%                                 XR{r} = R{Conditions(pick)};
+%                                 prods{end+1}{1} = Conditions(pick);
+%                                 XXX{end+1}{1} = X{pick};
                             else
                                 pick = 1;
                                 X{r+1} = B{Conditions(pick)};
@@ -186,7 +186,7 @@ for n1 = 1:N
                             end
                             
                             
-                            %check if M{2} == M{1}
+                            %FINISH CHECK
                             if(d(R{Conditions(1)},X{1})< 1e-8)
                                 fin = 1;
 %                                 disp("Original:")
@@ -215,6 +215,7 @@ for n1 = 1:N
                                 %prods{end}{end+1} = Conditions(1);
                                  XXX{end}{2} = X{2};
                             end
+%                             FIRST REPEAT CHECK
                             if(length(XX)>1)
                                 for z =1:(length(XX)-1)
                                     if((d(XX{z},X{1})<1e-8)||(d(RR{z},XR{1})<1e-8))
@@ -231,6 +232,7 @@ for n1 = 1:N
                             
                             while(fin == 0)
                                 i=0;
+%                                 NEXT SELECTION #2
                                 Conditions = zeros(1,8);
                                 
                                 
@@ -315,10 +317,10 @@ for n1 = 1:N
 %                                     prods{end}{end} = Conditions(sortScore(2));
 %                                 end
 
-
+%                                 PREVIOUS ROUTINE CHECK
                                 if(length(XXX)>1)
                                     for z =1:(length(XX)-1)
-                                        if((d(r45(XX{z}*P,4),X{r})<1e-8)||(d(XX{z},X{r})<1e-8)||(d(RR{z},XR{r})<1e-8))
+                                        if((d(RR{z},XR{r})<1e-8))%(d(r45(XX{z}*P,4),X{r})<1e-8)||(d(XX{z},X{r})<1e-8)||
                                             fin =1;
                                         end
                                     end
@@ -328,9 +330,9 @@ for n1 = 1:N
                                     end
                                     
                                     for z =1:(length(XXX)-1)
-                                        for s1=1:3
+                                        for s1=2:2
                                             for y =1:length(XXX{z})
-                                                if((d(r45(XXX{z}{y}*P,4),Mrot{s1})<1e-8)||(d(XXX{z}{y},Mrot{s1})<1e-8))
+                                                if((d(XXX{z}{y},Mrot{s1})<1e-8))%(d(r45(XXX{z}{y}*P,4),Mrot{s1})<1e-8)||
                                                     fin =1;
                                                 end
                                             end
@@ -345,7 +347,7 @@ for n1 = 1:N
 
                                 
                                 
-                                %%%%%%%%%%%%
+                                %%%%%%%%%%%% FINISH CHECK
                                 if(d(B{Conditions(pick)},X{1})< 1e-3)
                                      fin = 1;
                                      
@@ -370,15 +372,15 @@ for n1 = 1:N
                                     Nb8 = 0;
                                     if(mod(length(XR),2) == 0)
                                         %Nb2 = logical( (d(X{1},XR{length(XR)/2+1}) < 1e-3)||(d(r45(X{1},1),XR{length(XR)/2+1}) < 1e-3)||(d(r45(X{1},7),XR{length(XR)/2+1}) < 1e-3))*8;
-                                        Nb2 = logical( (d(X{1},XR{length(XR)/2}) < 1e-3)||(d(X{1},r45(XR{length(XR)/2},1)) < 1e-3)||(d(X{1},r45(XR{length(XR)/2},7)) < 1e-3))*4;
+                                        Nb2 = logical( (d(X{1},XR{length(XR)/2}) < 1e-3))*4;
                                     end
                                     if((mod(length(XR),4) == 0))
                                         %Nb4 = logical( (d(X{1},XR{length(XR)/4+1}) < 1e-3)||(d(r45(X{1},1),XR{length(XR)/4+1}) < 1e-3)||(d(r45(X{1},7),XR{length(XR)/4+1}) < 1e-3))*4;
-                                        Nb2 = logical( (d(X{1},XR{length(XR)/4}) < 1e-3))*2;
+                                        Nb4 = logical( (d(X{1},XR{length(XR)/4}) < 1e-3))*2;
                                     end
                                     if((mod(length(XR),8) == 0))
                                         %Nb8 = logical( (d(X{1},XR{length(XR)/8+1}) < 1e-3)||(d(r45(X{1},1),XR{length(XR)/8+1}) < 1e-3)||(d(r45(X{1},7),XR{length(XR)/8+1}) < 1e-3))*2;
-                                        Nb2 = logical( (d(X{1},XR{length(XR)/8}) < 1e-3))*1;
+                                        Nb8 = logical( (d(X{1},XR{length(XR)/8}) < 1e-3))*1;
                                     end
                                     if(Nb8~=0)
                                         Nb = 1;
@@ -433,5 +435,6 @@ zeroList =[4,24,48,72,140,160,176,184,200,224,288,432,456,472,496,704,728,816,85
 zero = zeroList(zeroList<=N);
 g(zero)=0;
 disp("Deviation:")
-disp(d(g',gacc(1:N)'))
-disp(find(abs(g-gacc(1:N))>0)')
+disp(d(g',gacc2(1:N)'))
+disp(find(abs(g-gacc2(1:N))>0)')
+
